@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username    String   @unique
+  displayName String
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+
+  playlists       Playlist[]
+  followedArtists Artist[]
+
+  followedBy User[] @relation("UserFollows")
+  following  User[] @relation("UserFollows")
+}
+
+model Artist {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  albums    Album[]
+  songs     Song[]
+  followers User[]
+}
+
+model Album {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  year      Int
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  artist   Artist @relation(fields: [artistId], references: [id])
+  artistId String @db.Uuid
+
+  songs Song[]
+}
+
+model Song {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  duration  Int // in seconds
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  album   Album  @relation(fields: [albumId], references: [id])
+  albumId String @db.Uuid
+
+  artist   Artist @relation(fields: [artistId], references: [id])
+  artistId String @db.Uuid
+
+  playlists Playlist[]
+}
+
+model Playlist {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  creator   User   @relation(fields: [creatorId], references: [id])
+  creatorId String @db.Uuid
+
+  songs Song[]
+}
