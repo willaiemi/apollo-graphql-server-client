@@ -1,4 +1,4 @@
-import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/dist/esm/plugin/landingPage/default";
+import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
 import { GraphQLModule as GraphQLNestModule } from "@nestjs/graphql";
@@ -12,5 +12,6 @@ import { GraphQLModule as GraphQLNestModule } from "@nestjs/graphql";
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
   ],
+  exports: [GraphQLNestModule],
 })
 export class GraphQLModule {}
